@@ -3,25 +3,54 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Karaoke - Panel en tiempo real</title>
+  <title>Panel Karaoke Búzios — Fiesta</title>
   <style>
-    body{font-family:system-ui,Segoe UI,Roboto,Arial;background:#fff;padding:18px}
-    h1{font-size:20px}
-    table{width:100%;border-collapse:collapse;margin-top:12px}
-    th,td{padding:8px;border-bottom:1px solid #eee;text-align:left}
-    tr.new{background:#f0fff0}
-    .lang{font-weight:600}
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      margin:0;
+      background: linear-gradient(to bottom, #00c3ff, #ffff66);
+      color:#333;
+      padding:20px;
+    }
+    h1 {text-align:center; font-size:2em; margin-bottom:10px; color:#fff; text-shadow:1px 1px 4px #000;}
+    h2 {margin-top:30px; color:#fff; text-shadow:1px 1px 3px #000;}
+    table {width:100%; border-collapse: collapse; margin-top:10px; background: rgba(255,255,255,0.9); border-radius:8px; overflow:hidden;}
+    th,td {padding:10px; text-align:left; border-bottom:1px solid #eee;}
+    tr.new {animation:fadein 0.7s;}
+    tr.pending{background:#d4f7dc;}
+    tr.done{background:#f7f0d4;}
+    .lang-es{color:#ff9900; font-weight:bold;}
+    .lang-pt{color:#33cc33; font-weight:bold;}
+    button {padding:5px 10px; border:none; border-radius:6px; cursor:pointer; transition:0.3s; font-weight:bold;}
+    button.doneBtn {background:#00ccff; color:white;}
+    button.deleteBtn {background:#ff4d4d; color:white;}
+    button:hover {opacity:0.8;}
+    .section {margin-bottom:40px;}
+    @keyframes fadein {from{opacity:0} to{opacity:1}}
   </style>
 </head>
 <body>
-  <h1>Panel Karaoke — Entradas en tiempo real</h1>
-  <div>Última conexión: <span id="status">conectando...</span></div>
-  <table id="tbl">
-    <thead>
-      <tr><th>#</th><th>Hora</th><th>Idioma</th><th>Nombre</th><th>Canción</th><th>Artista</th></tr>
-    </thead>
-    <tbody id="body"></tbody>
-  </table>
+  <h1>🎤 Karaoke Búzios — Fiesta en la Playa 🌴🎶</h1>
+  
+  <div class="section">
+    <h2>Pendientes — Ainda não cantaram 🎵</h2>
+    <table>
+      <thead>
+        <tr><th>#</th><th>Hora</th><th>Idioma</th><th>Nombre</th><th>Canción</th><th>Artista</th><th>Acciones</th></tr>
+      </thead>
+      <tbody id="pendingBody"></tbody>
+    </table>
+  </div>
+  
+  <div class="section">
+    <h2>Ya cantaron — Já cantaram 🎤</h2>
+    <table>
+      <thead>
+        <tr><th>#</th><th>Hora</th><th>Idioma</th><th>Nombre</th><th>Canción</th><th>Artista</th><th>Acciones</th></tr>
+      </thead>
+      <tbody id="doneBody"></tbody>
+    </table>
+  </div>
 
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -39,35 +68,66 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    const status = document.getElementById('status');
-    const tbody = document.getElementById('body');
+
+    const pendingBody = document.getElementById('pendingBody');
+    const doneBody = document.getElementById('doneBody');
     let counter = 0;
 
-    db.ref(".info/connected").on("value", snap => {
-      status.textContent = snap.val() ? "conectado ✅" : "desconectado ❌";
-    });
-
-    db.ref('karaoke/entries')
-      .limitToLast(200)
-      .on('child_added', snap => {
-        const data = snap.val();
-        counter++;
-        const tr = document.createElement('tr');
-        tr.className = 'new';
-        const date = new Date(data.timestamp);
-        tr.innerHTML = `
-          <td>${counter}</td>
-          <td>${date.toLocaleString()}</td>
-          <td class="lang">${data.language}</td>
-          <td>${escapeHtml(data.name)}</td>
-          <td>${escapeHtml(data.song)}</td>
-          <td>${escapeHtml(data.artist)}</td>
-        `;
-        tbody.prepend(tr);
-        setTimeout(()=>tr.classList.remove('new'), 2500);
-    });
-
     function escapeHtml(s){ return s ? s.replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])) : ''; }
+
+    db.ref('karaoke/entries').limitToLast(200).on('child_added', snap=>{
+      const data = snap.val();
+      const key = snap.key;
+      addRow(data, key, pendingBody, 'pending');
+    });
+
+    db.ref('karaoke/entries').limitToLast(200).on('child_changed', snap=>{
+      // opcional, en caso de actualizaciones futuras
+    });
+
+    db.ref('karaoke/entries').limitToLast(200).on('child_removed', snap=>{
+      const key = snap.key;
+      let row = document.querySelector(`tr[data-key="${key}"]`);
+      if(row) row.remove();
+    });
+
+    function addRow(data, key, tableBody, status){
+      counter++;
+      const tr = document.createElement('tr');
+      tr.className = status;
+      tr.setAttribute('data-key', key);
+      const date = new Date(data.timestamp);
+      tr.innerHTML = `
+        <td>${counter}</td>
+        <td>${date.toLocaleTimeString()}</td>
+        <td class="lang-${data.language}">${data.language}</td>
+        <td>${escapeHtml(data.name)}</td>
+        <td>${escapeHtml(data.song)}</td>
+        <td>${escapeHtml(data.artist)}</td>
+        <td>
+          ${status==='pending'?`<button class="doneBtn" onclick="markDone('${key}', this)">Ya cantó / Já cantou</button>`:''}
+          <button class="deleteBtn" onclick="deleteEntry('${key}', this)">Eliminar / Remover</button>
+        </td>
+      `;
+      tableBody.prepend(tr);
+    }
+
+    function markDone(key, btn){
+      db.ref('karaoke/entries/' + key).once('value').then(snap=>{
+        const data = snap.val();
+        if(!data) return;
+        const row = btn.closest('tr');
+        row.remove();
+        addRow(data, key, doneBody, 'done');
+      });
+    }
+
+    function deleteEntry(key, btn){
+      if(confirm("¿Eliminar esta entrada? / Deseja remover esta inscrição?")){
+        db.ref('karaoke/entries/' + key).remove()
+          .catch(err=>alert("Error al eliminar: " + err));
+      }
+    }
   </script>
 </body>
 </html>
