@@ -1,106 +1,291 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Karaoke Búzios 🎤🌴</title>
-<style>
-  body {
-    margin:0; padding:0;
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    background: linear-gradient(-45deg, #00c3ff, #ffff66, #ff99cc, #66ff99);
-    background-size: 400% 400%;
-    animation: gradientShift 10s ease infinite;
-    overflow:hidden;
-    color:#fff;
-  }
-  @keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-  header {
-    text-align:center; padding:60px 20px; animation: fadeIn 2s ease forwards;
-  }
-  @keyframes fadeIn {from{opacity:0;transform:translateY(-20px);}to{opacity:1;transform:translateY(0);}}
-  h1 {font-size:3.2em;text-shadow:2px 2px 6px rgba(0,0,0,0.4);margin-bottom:0.3em;}
-  p {font-size:1.2em;text-shadow:1px 1px 3px rgba(0,0,0,0.4);}
-  .button {display:inline-block;margin-top:25px;padding:18px 45px;font-size:1.2em;font-weight:bold;color:#fff;background:linear-gradient(45deg,#ffcc00,#00cc33);border:none;border-radius:12px;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,0.3);transition:all 0.4s ease;}
-  .button:hover {transform:scale(1.1) rotate(2deg);filter:brightness(1.2);}
-  .cpf-message {position:fixed;bottom:20px;right:20px;background:rgba(255,255,255,0.9);padding:15px 20px;border-radius:12px;color:#333;text-align:center;box-shadow:0 4px 15px rgba(0,0,0,0.3);}
-  .cpf-message strong{color:#e67e22;}
-  /* Chat */
-  #chatToggle{position:fixed;bottom:20px;left:20px;background:linear-gradient(45deg,#ffcc00,#00cc33);color:#fff;border:none;border-radius:50%;width:60px;height:60px;font-size:1.8em;box-shadow:0 4px 15px rgba(0,0,0,0.4);cursor:pointer;transition:0.3s;}
-  #chatToggle:hover{transform:scale(1.1);}
-  #chatWindow{position:fixed;bottom:90px;left:20px;width:300px;height:380px;background:rgba(255,255,255,0.9);border-radius:15px;box-shadow:0 8px 25px rgba(0,0,0,0.4);display:none;flex-direction:column;overflow:hidden;animation:fadeIn 0.5s ease;}
-  #chatHeader{background:linear-gradient(45deg,#00c3ff,#00cc33);color:#fff;text-align:center;padding:10px;font-weight:bold;}
-  #messages{flex:1;overflow-y:auto;padding:10px;background:rgba(255,255,255,0.7);color:#333;}
-  #chatInput{border:none;padding:8px;width:90%;margin:5px auto;border-radius:6px;display:block;}
-  #sendBtn{background:#00c3ff;color:#fff;border:none;width:90%;margin:5px auto 10px;padding:8px;border-radius:6px;cursor:pointer;font-weight:bold;}
-</style>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>🎤 Admin Karaoke Búzios — Control del Show 🌴</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      margin: 0;
+      background: linear-gradient(-45deg, #00c3ff, #ffff66, #ff99cc, #66ff99);
+      background-size: 400% 400%;
+      animation: gradient 12s ease infinite;
+      color: #333;
+      padding: 20px;
+    }
+    @keyframes gradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    h1 {
+      text-align:center;
+      font-size:2.3em;
+      color:#fff;
+      text-shadow:1px 1px 5px #000;
+      margin-bottom:30px;
+    }
+    h2 {
+      color:#fff;
+      text-shadow:1px 1px 3px #000;
+      margin-top:40px;
+    }
+    table {
+      width:100%;
+      border-collapse: collapse;
+      margin-top:10px;
+      background: rgba(255,255,255,0.9);
+      border-radius:10px;
+      overflow:hidden;
+      box-shadow:0 4px 15px rgba(0,0,0,0.3);
+    }
+    th,td {
+      padding:10px;
+      text-align:left;
+      border-bottom:1px solid #eee;
+    }
+    tr.new {
+      animation: highlight 1s ease-out;
+    }
+    @keyframes highlight {
+      from { background-color: #fffa9c; }
+      to { background-color: #fff; }
+    }
+    tr.pending { background:#e6ffe6; }
+    tr.done { background:#fff4e6; }
+    .lang-es{color:#ff9900;font-weight:bold;}
+    .lang-pt{color:#33cc33;font-weight:bold;}
+    .lang-en{color:#0099ff;font-weight:bold;}
+    button {
+      padding:6px 10px;
+      border:none;
+      border-radius:6px;
+      cursor:pointer;
+      font-weight:bold;
+      transition:all 0.3s;
+    }
+    button.doneBtn {background:#00ccff;color:white;}
+    button.deleteBtn {background:#ff4d4d;color:white;}
+    button:hover {transform:scale(1.05);opacity:0.85;}
+    .section {margin-bottom:60px;}
+
+    /* CHAT */
+    #chatToggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: linear-gradient(45deg,#ffcc00,#00cc33);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 65px;
+      height: 65px;
+      font-size: 1.8em;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    #chatToggle:hover { transform: scale(1.1); }
+
+    #chatWindow {
+      position: fixed;
+      bottom: 95px;
+      right: 20px;
+      width: 350px;
+      height: 450px;
+      background: rgba(255,255,255,0.95);
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      animation: fadein 0.5s ease;
+    }
+    @keyframes fadein { from{opacity:0;} to{opacity:1;} }
+    #chatHeader {
+      background: linear-gradient(45deg,#00c3ff,#00cc33);
+      color: #fff;
+      text-align: center;
+      padding: 12px;
+      font-weight: bold;
+      font-size:1.1em;
+    }
+    #messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      background: rgba(255,255,255,0.7);
+      color:#333;
+    }
+    .msg {
+      margin: 6px 0;
+      padding:6px 10px;
+      background: rgba(0,0,0,0.05);
+      border-radius:8px;
+    }
+    #chatInput {
+      border: none;
+      padding: 8px;
+      width: 90%;
+      margin: 5px auto;
+      border-radius: 6px;
+      display: block;
+    }
+    #sendBtn {
+      background: #00c3ff;
+      color: #fff;
+      border: none;
+      width: 90%;
+      margin: 5px auto 10px;
+      padding: 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    #sendBtn:hover {opacity:0.85;}
+  </style>
 </head>
 <body>
-<header>
-  <h1>🎤 Karaoke Night Búzios 🇧🇷🎶</h1>
-  <p>Bem-vindo ao show! / ¡Bienvenido al show! / Welcome to the show!<br>
-  Escolha sua música e venha brilhar / Elegí tu canción y vení a brillar / Choose your song and shine!</p>
-  <button class="button" onclick="window.location.href='form.html'">🎶 Participar / Participar / Join In 🎶</button>
-</header>
+  <h1>🎤 Panel de Administración Karaoke Búzios 🌴<br>Control del Show / Controle da Festa / Show Control</h1>
 
-<div class="cpf-message">
-  Si quiere colaborar con el show / If you wish to support the show / Se quiser colaborar com o show:<br>
-  <strong>028.602.077.75</strong><br>
-  ¡Gracias! / Thank you! / Obrigado! 🙏🎶
-</div>
+  <div class="section">
+    <h2>🎶 Pendientes / Ainda não cantaram / Pending</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th><th>Hora / Time</th><th>Idioma / Language</th><th>Nombre / Name</th><th>Canción / Song</th><th>Artista / Artist</th><th>Acciones / Actions</th>
+        </tr>
+      </thead>
+      <tbody id="pendingBody"></tbody>
+    </table>
+  </div>
 
-<button id="chatToggle">💬</button>
-<div id="chatWindow">
-  <div id="chatHeader">💬 Chat en vivo / Chat ao vivo / Live chat</div>
-  <div id="messages"></div>
-  <input type="text" id="chatInput" placeholder="Escribe aquí / Digite aqui / Type here...">
-  <button id="sendBtn">Enviar / Enviar / Send</button>
-</div>
+  <div class="section">
+    <h2>🎤 Ya cantaron / Já cantaram / Already Sang</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th><th>Hora / Time</th><th>Idioma / Language</th><th>Nombre / Name</th><th>Canción / Song</th><th>Artista / Artist</th><th>Acciones / Actions</th>
+        </tr>
+      </thead>
+      <tbody id="doneBody"></tbody>
+    </table>
+  </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyDM0CAPFLXh_bVDCh43rJs_XCfcvATtnjg",
-    authDomain: "buzios-karaoke-fb.firebaseapp.com",
-    databaseURL: "https://buzios-karaoke-fb-default-rtdb.firebaseio.com",
-    projectId: "buzios-karaoke-fb",
-    storageBucket: "buzios-karaoke-fb.firebasestorage.app",
-    messagingSenderId: "420981577649",
-    appId: "1:420981577649:web:c5b5c3baa23cfd480d4f90"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
+  <!-- BOTÓN DE CHAT -->
+  <button id="chatToggle">💬</button>
 
-  const chatToggle=document.getElementById('chatToggle');
-  const chatWindow=document.getElementById('chatWindow');
-  const messagesDiv=document.getElementById('messages');
-  const chatInput=document.getElementById('chatInput');
-  const sendBtn=document.getElementById('sendBtn');
+  <!-- CHAT FLOTANTE -->
+  <div id="chatWindow">
+    <div id="chatHeader">💬 Chat en vivo / Chat ao vivo / Live chat</div>
+    <div id="messages"></div>
+    <input type="text" id="chatInput" placeholder="Escribe aquí / Digite aqui / Type here...">
+    <button id="sendBtn">Enviar / Enviar / Send</button>
+  </div>
 
-  chatToggle.addEventListener('click',()=>{
-    chatWindow.style.display=chatWindow.style.display==='flex'?'none':'flex';
-  });
+  <!-- FIREBASE -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDM0CAPFLXh_bVDCh43rJs_XCfcvATtnjg",
+      authDomain: "buzios-karaoke-fb.firebaseapp.com",
+      databaseURL: "https://buzios-karaoke-fb-default-rtdb.firebaseio.com",
+      projectId: "buzios-karaoke-fb",
+      storageBucket: "buzios-karaoke-fb.firebasestorage.app",
+      messagingSenderId: "420981577649",
+      appId: "1:420981577649:web:c5b5c3baa23cfd480d4f90"
+    };
 
-  db.ref('karaoke/chat').limitToLast(50).on('child_added',snap=>{
-    const msg=snap.val();
-    const div=document.createElement('div');
-    div.className='msg';
-    div.innerHTML=`<strong>${msg.user}:</strong> ${msg.text}`;
-    messagesDiv.appendChild(div);
-    messagesDiv.scrollTop=messagesDiv.scrollHeight;
-  });
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-  sendBtn.addEventListener('click',()=>{
-    const text=chatInput.value.trim();
-    if(!text) return;
-    db.ref('karaoke/chat').push({ user:'Invitado', text, time:Date.now() });
-    chatInput.value='';
-  });
-</script>
+    const pendingBody = document.getElementById('pendingBody');
+    const doneBody = document.getElementById('doneBody');
+    let counter = 0;
+
+    function escapeHtml(s){ return s ? s.replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',\"'\":'&#39;'}[m])) : ''; }
+
+    // Escuchar nuevas inscripciones
+    db.ref('karaoke/entries').limitToLast(200).on('child_added', snap=>{
+      const data = snap.val();
+      const key = snap.key;
+      addRow(data, key, pendingBody, 'pending', true);
+    });
+
+    db.ref('karaoke/entries').on('child_removed', snap=>{
+      const key = snap.key;
+      const row = document.querySelector(`tr[data-key=\"${key}\"]`);
+      if(row) row.remove();
+    });
+
+    function addRow(data, key, tableBody, status, highlight){
+      counter++;
+      const tr = document.createElement('tr');
+      tr.className = status + (highlight ? ' new' : '');
+      tr.setAttribute('data-key', key);
+      const date = new Date(data.timestamp);
+      tr.innerHTML = `
+        <td>${counter}</td>
+        <td>${date.toLocaleTimeString()}</td>
+        <td class=\"lang-${data.language}\">${data.language}</td>
+        <td>${escapeHtml(data.name)}</td>
+        <td>${escapeHtml(data.song)}</td>
+        <td>${escapeHtml(data.artist)}</td>
+        <td>
+          ${status==='pending'
+            ?`<button class=\"doneBtn\" onclick=\"markDone('${key}', this)\">✔ Ya cantó / Já cantou / Done</button>`
+            :''}
+          <button class=\"deleteBtn\" onclick=\"deleteEntry('${key}')\">🗑 Eliminar / Remover / Delete</button>
+        </td>
+      `;
+      tableBody.prepend(tr);
+    }
+
+    function markDone(key, btn){
+      db.ref('karaoke/entries/' + key).once('value').then(snap=>{
+        const data = snap.val();
+        if(!data) return;
+        const row = btn.closest('tr');
+        row.remove();
+        addRow(data, key, doneBody, 'done', false);
+      });
+    }
+
+    function deleteEntry(key){
+      if(confirm(\"¿Eliminar esta entrada? / Deseja remover esta inscrição? / Delete this entry?\")){
+        db.ref('karaoke/entries/' + key).remove()
+          .catch(err=>alert(\"Error: \" + err));
+      }
+    }
+
+    // CHAT
+    const chatToggle=document.getElementById('chatToggle');
+    const chatWindow=document.getElementById('chatWindow');
+    const messagesDiv=document.getElementById('messages');
+    const chatInput=document.getElementById('chatInput');
+    const sendBtn=document.getElementById('sendBtn');
+
+    chatToggle.addEventListener('click',()=>{
+      chatWindow.style.display=chatWindow.style.display==='flex'?'none':'flex';
+    });
+
+    db.ref('karaoke/chat').limitToLast(100).on('child_added',snap=>{
+      const msg=snap.val();
+      const div=document.createElement('div');
+      div.className='msg';
+      div.innerHTML=`<strong>${msg.user}:</strong> ${msg.text}`;
+      messagesDiv.appendChild(div);
+      messagesDiv.scrollTop=messagesDiv.scrollHeight;
+    });
+
+    sendBtn.addEventListener('click',()=>{
+      const text=chatInput.value.trim();
+      if(!text) return;
+      db.ref('karaoke/chat').push({ user:'ADMIN 🎤', text, time:Date.now() });
+      chatInput.value='';
+    });
+  </script>
 </body>
 </html>
