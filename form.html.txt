@@ -37,22 +37,19 @@
     <small style="display:block;margin-top:12px;color:#666">Tu inscripción se enviará en tiempo real.</small>
   </div>
 
-  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
   <script>
-    // --- PON AQUÍ TU CONFIG FIREBASE ---
     const firebaseConfig = {
-      apiKey: "TU_API_KEY",
-      authDomain: "TU_PROJECT.firebaseapp.com",
-      databaseURL: "https://TU_PROJECT.firebaseio.com",
-      projectId: "TU_PROJECT",
-      storageBucket: "TU_PROJECT.appspot.com",
-      messagingSenderId: "SENDER_ID",
-      appId: "APP_ID"
+      apiKey: "AIzaSyDM0CAPFLXh_bVDCh43rJs_XCfcvATtnjg",
+      authDomain: "buzios-karaoke-fb.firebaseapp.com",
+      databaseURL: "https://buzios-karaoke-fb-default-rtdb.firebaseio.com",
+      projectId: "buzios-karaoke-fb",
+      storageBucket: "buzios-karaoke-fb.firebasestorage.app",
+      messagingSenderId: "420981577649",
+      appId: "1:420981577649:web:c5b5c3baa23cfd480d4f90"
     };
-    // ----------------------------------
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
