@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Karaoke - Panel en tiempo real</title>
+  <style>
+    body{font-family:system-ui,Segoe UI,Roboto,Arial;background:#fff;padding:18px}
+    h1{font-size:20px}
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th,td{padding:8px;border-bottom:1px solid #eee;text-align:left}
+    tr.new{background:#f0fff0}
+    .lang{font-weight:600}
+  </style>
+</head>
+<body>
+  <h1>Panel Karaoke — Entradas en tiempo real</h1>
+  <div>Última conexión: <span id="status">conectando...</span></div>
+  <table id="tbl">
+    <thead>
+      <tr><th>#</th><th>Hora</th><th>Idioma</th><th>Nombre</th><th>Canción</th><th>Artista</th></tr>
+    </thead>
+    <tbody id="body"></tbody>
+  </table>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+  <script>
+    // --- PON AQUÍ TU CONFIG FIREBASE ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyDM0CAPFLXh_bVDCh43rJs_XCfcvATtnjg",
+  authDomain: "buzios-karaoke-fb.firebaseapp.com",
+  databaseURL: "https://buzios-karaoke-fb-default-rtdb.firebaseio.com",
+  projectId: "buzios-karaoke-fb",
+  storageBucket: "buzios-karaoke-fb.firebasestorage.app",
+  messagingSenderId: "420981577649",
+  appId: "1:420981577649:web:c5b5c3baa23cfd480d4f90"
+    };
+    // ----------------------------------
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const status = document.getElementById('status');
+    const tbody = document.getElementById('body');
+    let counter = 0;
+
+    // show connected status via onDisconnect hack
+    db.ref(".info/connected").on("value", snap => {
+      if(snap.val() === true) status.textContent = 'conectado';
+      else status.textContent = 'desconectado';
+    });
+
+    const ref = db.ref('karaoke/entries');
+    ref.limitToLast(100).on('child_added', (snap) => {
+      const data = snap.val();
+      counter++;
+      const tr = document.createElement('tr');
+      tr.className = 'new';
+      const date = new Date(data.timestamp || Date.now());
+      tr.innerHTML = `
+        <td>${counter}</td>
+        <td>${date.toLocaleString()}</td>
+        <td class="lang">${data.language}</td>
+        <td>${escapeHtml(data.name)}</td>
+        <td>${escapeHtml(data.song)}</td>
+        <td>${escapeHtml(data.artist)}</td>
+      `;
+      tbody.insertBefore(tr, tbody.firstChild);
+      // optional: remove highlight after a bit
+      setTimeout(()=>tr.classList.remove('new'), 2500);
+    });
+
+    // small helper
+    function escapeHtml(s){ if(!s) return ''; return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  </script>
+</body>
+</html>

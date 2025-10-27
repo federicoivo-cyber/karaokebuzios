@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Karaoke - Registro</title>
+  <style>
+    body{font-family:system-ui,Segoe UI,Roboto,Arial;background:#f7f7f8;padding:20px}
+    .card{max-width:480px;margin:20px auto;background:#fff;padding:18px;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.06)}
+    label{display:block;margin-top:12px}
+    input,select,button{width:100%;padding:10px;margin-top:6px;border-radius:6px;border:1px solid #ddd}
+    .success{color:green;margin-top:12px}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Karaoke — Selecciona idioma</h2>
+
+    <label for="lang">Idioma</label>
+    <select id="lang">
+      <option value="es">Español</option>
+      <option value="pt">Português</option>
+      <option value="en">English</option>
+    </select>
+
+    <div id="formFields" style="margin-top:14px">
+      <label for="name">Nombre</label>
+      <input id="name" placeholder="Tu nombre">
+      <label for="song">Canción</label>
+      <input id="song" placeholder="Nombre de la canción">
+      <label for="artist">Artista</label>
+      <input id="artist" placeholder="Artista">
+      <button id="send">Enviar</button>
+      <div id="msg" class="success" style="display:none"></div>
+    </div>
+
+    <small style="display:block;margin-top:12px;color:#666">Tu inscripción se enviará en tiempo real.</small>
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+  <script>
+    // --- PON AQUÍ TU CONFIG FIREBASE ---
+    const firebaseConfig = {
+      apiKey: "TU_API_KEY",
+      authDomain: "TU_PROJECT.firebaseapp.com",
+      databaseURL: "https://TU_PROJECT.firebaseio.com",
+      projectId: "TU_PROJECT",
+      storageBucket: "TU_PROJECT.appspot.com",
+      messagingSenderId: "SENDER_ID",
+      appId: "APP_ID"
+    };
+    // ----------------------------------
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const langEl = document.getElementById('lang');
+    const nameEl = document.getElementById('name');
+    const songEl = document.getElementById('song');
+    const artistEl = document.getElementById('artist');
+    const sendBtn = document.getElementById('send');
+    const msg = document.getElementById('msg');
+
+    sendBtn.addEventListener('click', async () => {
+      const payload = {
+        timestamp: Date.now(),
+        language: langEl.value,
+        name: nameEl.value.trim(),
+        song: songEl.value.trim(),
+        artist: artistEl.value.trim(),
+        userAgent: navigator.userAgent
+      };
+
+      if(!payload.name || !payload.song || !payload.artist){
+        msg.style.display='block'; msg.style.color='crimson'; msg.textContent = 'Completa todos los campos.';
+        return;
+      }
+
+      try{
+        await db.ref('karaoke/entries').push(payload);
+        msg.style.display='block'; msg.style.color='green'; msg.textContent = '¡Enviado! Gracias.';
+        nameEl.value=''; songEl.value=''; artistEl.value='';
+        setTimeout(()=>{ msg.style.display='none' }, 2000);
+      } catch(e){
+        msg.style.display='block'; msg.style.color='crimson'; msg.textContent = 'Error al enviar. Intenta de nuevo.';
+        console.error(e);
+      }
+    });
+  </script>
+</body>
+</html>
