@@ -135,12 +135,22 @@
     messagesDiv.scrollTop=messagesDiv.scrollHeight;
   });
 
-  sendBtn.addEventListener('click',()=>{
-    const text=chatInput.value.trim();
-    if(!text) return;
-    db.ref('karaoke/chat').push({ user:'Invitado', text, time:Date.now() });
-    chatInput.value='';
+  let userName = localStorage.getItem('karaokeUser');
+if(!userName){
+  userName = prompt("🎤 ¿Cuál es tu nombre para el chat?");
+  localStorage.setItem('karaokeUser', userName || 'Invitado');
+}
+
+sendBtn.addEventListener('click',()=>{
+  const text=chatInput.value.trim();
+  if(!text) return;
+  db.ref('karaoke/chat').push({
+    user: userName || 'Invitado',
+    text,
+    time: Date.now()
   });
+  chatInput.value='';
+});
 </script>
 </body>
 </html>
