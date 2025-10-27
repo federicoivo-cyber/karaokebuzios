@@ -3,151 +3,102 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Participar en Karaoke 🎤</title>
+<title>Karaoke Búzios 🎤🌴</title>
 <style>
   body {
-    margin: 0;
+    margin:0; padding:0;
     font-family: 'Segoe UI', system-ui, sans-serif;
-    background: linear-gradient(135deg, #00c3ff, #ff99cc, #ffff66);
-    background-size: 300% 300%;
-    animation: gradientMove 10s infinite alternate ease-in-out;
-    color: #fff;
+    background: linear-gradient(-45deg, #00c3ff, #ffff66, #ff99cc, #66ff99);
+    background-size: 400% 400%;
+    animation: gradientShift 10s ease infinite;
+    overflow:hidden;
+    color:#fff;
   }
-
-  @keyframes gradientMove {
+  @keyframes gradientShift {
     0% { background-position: 0% 50%; }
-    100% { background-position: 100% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
   }
-
   header {
-    text-align: center;
-    padding: 20px;
+    text-align:center; padding:60px 20px; animation: fadeIn 2s ease forwards;
   }
-  h1 {
-    font-size: 2.5em;
-    text-shadow: 2px 2px 6px rgba(0,0,0,0.4);
+  @keyframes fadeIn {from{opacity:0;transform:translateY(-20px);}to{opacity:1;transform:translateY(0);}}
+  h1 {font-size:3.2em;text-shadow:2px 2px 6px rgba(0,0,0,0.4);margin-bottom:0.3em;}
+  p {font-size:1.2em;text-shadow:1px 1px 3px rgba(0,0,0,0.4);}
+  .button {
+    display:inline-block;margin-top:25px;padding:18px 45px;
+    font-size:1.2em;font-weight:bold;color:#fff;
+    background:linear-gradient(45deg,#ffcc00,#00cc33);
+    border:none;border-radius:12px;cursor:pointer;
+    box-shadow:0 6px 20px rgba(0,0,0,0.3);transition:all 0.4s ease;
   }
+  .button:hover {transform:scale(1.1) rotate(2deg);filter:brightness(1.2);}
+  .cpf-message {
+    position:fixed;bottom:20px;right:20px;
+    background:rgba(255,255,255,0.9);padding:15px 20px;
+    border-radius:12px;color:#333;text-align:center;
+    box-shadow:0 4px 15px rgba(0,0,0,0.3);
+  }
+  .cpf-message strong{color:#e67e22;}
 
-  .container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    padding: 20px;
+  /* Chat */
+  #chatToggle{
+    position:fixed;bottom:20px;left:20px;
+    background:linear-gradient(45deg,#ffcc00,#00cc33);
+    color:#fff;border:none;border-radius:50%;
+    width:60px;height:60px;font-size:1.8em;
+    box-shadow:0 4px 15px rgba(0,0,0,0.4);
+    cursor:pointer;transition:0.3s;
   }
-
-  form {
-    background: rgba(255,255,255,0.15);
-    border-radius: 12px;
-    padding: 20px;
-    width: 300px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  #chatToggle:hover{transform:scale(1.1);}
+  #chatWindow{
+    position:fixed;bottom:90px;left:20px;width:300px;height:380px;
+    background:rgba(255,255,255,0.9);border-radius:15px;
+    box-shadow:0 8px 25px rgba(0,0,0,0.4);
+    display:none;flex-direction:column;overflow:hidden;
+    animation:fadeIn 0.5s ease;
   }
-  input, select, button {
-    width: 100%;
-    margin: 8px 0;
-    padding: 10px;
-    border: none;
-    border-radius: 8px;
-    font-size: 1em;
+  #chatHeader{
+    background:linear-gradient(45deg,#00c3ff,#00cc33);
+    color:#fff;text-align:center;padding:10px;font-weight:bold;
   }
-  input, select {
-    color: #333;
+  #messages{
+    flex:1;overflow-y:auto;padding:10px;
+    background:rgba(255,255,255,0.7);color:#333;
   }
-  button {
-    background: linear-gradient(45deg,#ffcc00,#00cc33);
-    color: #fff;
-    cursor: pointer;
-    transition: all 0.3s;
-    font-weight: bold;
+  .msg{margin-bottom:5px;}
+  #chatInput{
+    border:none;padding:8px;width:90%;margin:5px auto;
+    border-radius:6px;display:block;
   }
-  button:hover {
-    transform: scale(1.05);
-    filter: brightness(1.2);
-  }
-
-  /* Panel derecho: usuarios y chat */
-  .community {
-    background: rgba(0,0,0,0.3);
-    border-radius: 12px;
-    padding: 20px;
-    width: 340px;
-    max-height: 70vh;
-    overflow-y: auto;
-  }
-
-  .user-list {
-    list-style: none;
-    padding: 0;
-  }
-  .user-list li {
-    background: rgba(255,255,255,0.2);
-    margin: 5px 0;
-    padding: 8px;
-    border-radius: 8px;
-  }
-
-  .chat-box {
-    margin-top: 20px;
-  }
-  .messages {
-    max-height: 200px;
-    overflow-y: auto;
-    background: rgba(255,255,255,0.15);
-    padding: 10px;
-    border-radius: 10px;
-  }
-  .msg {
-    margin: 5px 0;
-  }
-
-  .emoji-picker {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 5px;
-  }
-  .emoji-picker span {
-    cursor: pointer;
-    font-size: 1.3em;
-    transition: transform 0.2s;
-  }
-  .emoji-picker span:hover {
-    transform: scale(1.3);
+  #sendBtn{
+    background:#00c3ff;color:#fff;border:none;width:90%;
+    margin:5px auto 10px;padding:8px;border-radius:6px;
+    cursor:pointer;font-weight:bold;
   }
 </style>
 </head>
 <body>
 <header>
-  <h1>🎤 Participa en el Karaoke Búzios 🎶</h1>
-  <p>Completa tus datos y saluda a los demás participantes 👋</p>
+  <h1>🎤 Karaoke Night Búzios 🇧🇷🎶</h1>
+  <p>Bem-vindo ao show! / ¡Bienvenido al show! / Welcome to the show!<br>
+  Escolha sua música e venha brilhar / Elegí tu canción y vení a brillar / Choose your song and shine!</p>
+  <button class="button" onclick="window.location.href='form.html'">🎶 Participar / Participar / Join In 🎶</button>
 </header>
 
-<div class="container">
-  <form id="karaokeForm">
-    <input type="text" id="name" placeholder="Tu nombre" required>
-    <input type="text" id="song" placeholder="Canción" required>
-    <input type="text" id="artist" placeholder="Artista" required>
-    <select id="language" required>
-      <option value="es">Español</option>
-      <option value="pt">Português</option>
-      <option value="en">English</option>
-    </select>
-    <button type="submit">🎶 Enviar / Send</button>
-  </form>
+<div class="cpf-message">
+  Si quiere colaborar con el show / If you wish to support the show / Se quiser colaborar com o show:<br>
+  <strong>028.602.077.75</strong><br>
+  ¡Gracias! / Thank you! / Obrigado! 🙏🎶
+</div>
 
-  <div class="community">
-    <h3>👥 Participantes en vivo</h3>
-    <ul id="userList" class="user-list"></ul>
-
-    <div class="chat-box">
-      <h4>💬 Chat Karaoke</h4>
-      <div id="messages" class="messages"></div>
-      <input type="text" id="chatInput" placeholder="Escribe un mensaje...">
-      <div class="emoji-picker">
-        <span>🎤</span><span>🎶</span><span>😄</span><span>🔥</span><span>👏</span>
-      </div>
-      <button id="sendBtn">Enviar</button>
-    </div>
-  </div>
+<!-- Botón y ventana de chat -->
+<button id="chatToggle">💬</button>
+<div id="chatWindow">
+  <div id="chatHeader">💬 Chat en vivo / Chat ao vivo / Live chat</div>
+  <div id="messages"></div>
+  <input type="text" id="chatInput" placeholder="Escribe aquí / Digite aqui / Type here...">
+  <button id="sendBtn">Enviar / Enviar / Send</button>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -165,72 +116,31 @@
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 
-  const userNameInput = document.getElementById('name');
-  const form = document.getElementById('karaokeForm');
-  const userList = document.getElementById('userList');
-  const messagesDiv = document.getElementById('messages');
-  const chatInput = document.getElementById('chatInput');
-  const sendBtn = document.getElementById('sendBtn');
+  const chatToggle=document.getElementById('chatToggle');
+  const chatWindow=document.getElementById('chatWindow');
+  const messagesDiv=document.getElementById('messages');
+  const chatInput=document.getElementById('chatInput');
+  const sendBtn=document.getElementById('sendBtn');
 
-  const userId = 'user-' + Math.random().toString(36).substring(2,9);
-  let userName = '';
-
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    userName = userNameInput.value.trim();
-    const song = document.getElementById('song').value.trim();
-    const artist = document.getElementById('artist').value.trim();
-    const language = document.getElementById('language').value;
-    db.ref('karaoke/entries').push({ name: userName, song, artist, language, timestamp: Date.now() });
-    db.ref('karaoke/users/' + userId).set({ name: userName, online: true });
-    form.reset();
+  chatToggle.addEventListener('click',()=>{
+    chatWindow.style.display=chatWindow.style.display==='flex'?'none':'flex';
   });
 
-  // Mostrar usuarios conectados
-  db.ref('karaoke/users').on('value', snap => {
-    const users = snap.val() || {};
-    userList.innerHTML = '';
-    Object.values(users).forEach(u => {
-      const li = document.createElement('li');
-      li.textContent = u.name + (u.online ? ' 🟢' : ' 🔴');
-      userList.appendChild(li);
-    });
-  });
-
-  // Chat en tiempo real
-  sendBtn.addEventListener('click', () => {
-    if(!chatInput.value.trim() || !userName) return;
-    db.ref('karaoke/chat').push({ user: userName, text: chatInput.value, time: Date.now() });
-    chatInput.value = '';
-  });
-
-  db.ref('karaoke/chat').limitToLast(50).on('child_added', snap => {
-    const msg = snap.val();
-    const div = document.createElement('div');
-    div.className = 'msg';
-    div.innerHTML = `<strong>${msg.user}:</strong> ${msg.text}`;
+  db.ref('karaoke/chat').limitToLast(50).on('child_added',snap=>{
+    const msg=snap.val();
+    const div=document.createElement('div');
+    div.className='msg';
+    div.innerHTML=`<strong>${msg.user}:</strong> ${msg.text}`;
     messagesDiv.appendChild(div);
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    messagesDiv.scrollTop=messagesDiv.scrollHeight;
   });
 
-  // Emojis
-  document.querySelectorAll('.emoji-picker span').forEach(e => {
-    e.addEventListener('click', () => {
-      chatInput.value += e.textContent;
-      chatInput.focus();
-    });
-  });
-
-  // Detectar desconexión
-  window.addEventListener('beforeunload', () => {
-    if(userId) db.ref('karaoke/users/' + userId).remove();
+  sendBtn.addEventListener('click',()=>{
+    const text=chatInput.value.trim();
+    if(!text) return;
+    db.ref('karaoke/chat').push({ user:'Invitado', text, time:Date.now() });
+    chatInput.value='';
   });
 </script>
 </body>
 </html>
-
-</html>
-
-
-
-
