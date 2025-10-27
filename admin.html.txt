@@ -27,17 +27,15 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
   <script>
-    // --- PON AQUÍ TU CONFIG FIREBASE ---
     const firebaseConfig = {
       apiKey: "AIzaSyDM0CAPFLXh_bVDCh43rJs_XCfcvATtnjg",
-  authDomain: "buzios-karaoke-fb.firebaseapp.com",
-  databaseURL: "https://buzios-karaoke-fb-default-rtdb.firebaseio.com",
-  projectId: "buzios-karaoke-fb",
-  storageBucket: "buzios-karaoke-fb.firebasestorage.app",
-  messagingSenderId: "420981577649",
-  appId: "1:420981577649:web:c5b5c3baa23cfd480d4f90"
+      authDomain: "buzios-karaoke-fb.firebaseapp.com",
+      databaseURL: "https://buzios-karaoke-fb-default-rtdb.firebaseio.com",
+      projectId: "buzios-karaoke-fb",
+      storageBucket: "buzios-karaoke-fb.firebasestorage.app",
+      messagingSenderId: "420981577649",
+      appId: "1:420981577649:web:c5b5c3baa23cfd480d4f90"
     };
-    // ----------------------------------
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
@@ -45,34 +43,31 @@
     const tbody = document.getElementById('body');
     let counter = 0;
 
-    // show connected status via onDisconnect hack
     db.ref(".info/connected").on("value", snap => {
-      if(snap.val() === true) status.textContent = 'conectado';
-      else status.textContent = 'desconectado';
+      status.textContent = snap.val() ? "conectado ✅" : "desconectado ❌";
     });
 
-    const ref = db.ref('karaoke/entries');
-    ref.limitToLast(100).on('child_added', (snap) => {
-      const data = snap.val();
-      counter++;
-      const tr = document.createElement('tr');
-      tr.className = 'new';
-      const date = new Date(data.timestamp || Date.now());
-      tr.innerHTML = `
-        <td>${counter}</td>
-        <td>${date.toLocaleString()}</td>
-        <td class="lang">${data.language}</td>
-        <td>${escapeHtml(data.name)}</td>
-        <td>${escapeHtml(data.song)}</td>
-        <td>${escapeHtml(data.artist)}</td>
-      `;
-      tbody.insertBefore(tr, tbody.firstChild);
-      // optional: remove highlight after a bit
-      setTimeout(()=>tr.classList.remove('new'), 2500);
+    db.ref('karaoke/entries')
+      .limitToLast(200)
+      .on('child_added', snap => {
+        const data = snap.val();
+        counter++;
+        const tr = document.createElement('tr');
+        tr.className = 'new';
+        const date = new Date(data.timestamp);
+        tr.innerHTML = `
+          <td>${counter}</td>
+          <td>${date.toLocaleString()}</td>
+          <td class="lang">${data.language}</td>
+          <td>${escapeHtml(data.name)}</td>
+          <td>${escapeHtml(data.song)}</td>
+          <td>${escapeHtml(data.artist)}</td>
+        `;
+        tbody.prepend(tr);
+        setTimeout(()=>tr.classList.remove('new'), 2500);
     });
 
-    // small helper
-    function escapeHtml(s){ if(!s) return ''; return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+    function escapeHtml(s){ return s ? s.replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])) : ''; }
   </script>
 </body>
 </html>
