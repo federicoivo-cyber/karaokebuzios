@@ -1,20 +1,149 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Karaoke Búzios</title>
-  <style>
-    body{font-family:system-ui,Segoe UI,Roboto,Arial;background:#fdf8e3;padding:20px;text-align:center;color:#333}
-    h1{font-size:2em;color:#2c6f2c;margin-top:50px}
-    p{font-size:1.2em;margin:20px 0}
-    button{padding:15px 30px;font-size:1.2em;border:none;border-radius:8px;background:#ffcc00;color:#333;cursor:pointer;transition:0.3s}
-    button:hover{background:#ffdd33}
-  </style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Karaoke Búzios 🎤🌴</title>
+<style>
+  body {
+    margin:0; padding:0;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: linear-gradient(to bottom, #00c3ff, #ffff66);
+    overflow-x:hidden;
+    color:#333;
+  }
+  header {
+    text-align:center; padding:30px;
+  }
+  h1 {
+    font-size:3em; color:#fff; text-shadow:2px 2px 5px #000;
+  }
+  p {
+    font-size:1.3em; color:#fff; text-shadow:1px 1px 3px #000;
+  }
+  .button {
+    display:inline-block;
+    margin-top:20px;
+    padding:20px 40px;
+    font-size:1.3em;
+    color:#fff;
+    background:linear-gradient(45deg,#ffcc00,#00cc33);
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+    transition: 0.3s;
+  }
+  .button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+  }
+
+  /* Confeti */
+  .confetti {
+    position:absolute; width:10px; height:10px;
+    background:yellow;
+    top:-10px; animation:fall 5s linear infinite;
+    border-radius:50%;
+  }
+  @keyframes fall {
+    0% {top:-10px; transform: rotate(0deg);}
+    100% {top:100vh; transform: rotate(360deg);}
+  }
+
+  /* Cantante animado */
+  .singer-container {
+    position:fixed; bottom:20px; left:20px; width:160px; height:160px;
+  }
+  .singer-gif {
+    width:100%; animation:bounce 2s infinite;
+  }
+  @keyframes bounce {
+    0%,100%{ transform: translateY(0);}
+    50%{ transform: translateY(-20px);}
+  }
+
+  /* Notas musicales en curva */
+  .note {
+    position:absolute;
+    font-size:1.2em;
+    animation:note-float 4s linear forwards;
+  }
+  @keyframes note-float {
+    0% {transform: translate(0,0) scale(1);}
+    25% {transform: translate(20px,-30px) scale(1.2);}
+    50% {transform: translate(-10px,-60px) scale(1.1);}
+    75% {transform: translate(15px,-90px) scale(1.3);}
+    100% {transform: translate(0,-120px) scale(0);}
+  }
+
+  /* Mensaje CPF */
+  .cpf-message {
+    position:fixed;
+    bottom:20px; right:20px;
+    background:rgba(255,255,255,0.95);
+    padding:15px 20px;
+    border-radius:12px;
+    font-size:1em;
+    text-align:center;
+    box-shadow:0 4px 12px rgba(0,0,0,0.3);
+  }
+</style>
 </head>
 <body>
-  <h1>🎤 Karaoke Night Búzios 🇧🇷 / ¡Bienvenido al Karaoke! 🇪🇸</h1>
-  <p>Escolha sua música e venha brilhar! ⭐<br>¡Elegí tu música y vení a brillar! 🎶✨</p>
-  <button onclick="window.location.href='form.html'">Participar / Participar</button>
+
+<header>
+  <h1>🎤 Karaoke Night Búzios 🇧🇷🎶</h1>
+  <p>Bem-vindo ao show! / ¡Bienvenido al show!<br>Escolha sua música e venha brilhar / Elegí tu canción y vení a brillar</p>
+  <button class="button" onclick="window.location.href='form.html'">Participar / Participar</button>
+</header>
+
+<!-- Confeti -->
+<div id="confetti-container"></div>
+
+<!-- Cantante animado (GIF caricatura brasileña) -->
+<div class="singer-container">
+  <img src="https://i.imgur.com/8Km9tLL.png" alt="Cantante animado" class="singer-gif" id="singer">
+</div>
+
+<!-- Notas musicales -->
+<div id="notes-container"></div>
+
+<!-- Mensaje CPF -->
+<div class="cpf-message">
+  Podés colaborar con el show a través del CPF:<br>
+  <strong>028.602.077.75</strong><br>
+  ¡Gracias por tu colaboración! 🙏🎶
+</div>
+
+<script>
+  // Confeti
+  const confettiContainer = document.getElementById('confetti-container');
+  for(let i=0;i<60;i++){
+    const div = document.createElement('div');
+    div.className='confetti';
+    div.style.left = Math.random()*100 + 'vw';
+    div.style.backgroundColor = `hsl(${Math.random()*360},80%,60%)`;
+    div.style.animationDuration = (3+Math.random()*5) + 's';
+    div.style.width = (6+Math.random()*10) + 'px';
+    div.style.height = div.style.width;
+    confettiContainer.appendChild(div);
+  }
+
+  // Notas musicales animadas
+  const notesContainer = document.getElementById('notes-container');
+  const notes = ['🎵','🎶','🎤','🎼','🎹','🥁'];
+  function createNote(){
+    const n = document.createElement('div');
+    n.className='note';
+    n.style.left = 40 + Math.random()*120 + 'px';
+    n.style.bottom = '150px';
+    n.textContent = notes[Math.floor(Math.random()*notes.length)];
+    notesContainer.appendChild(n);
+    setTimeout(()=>{n.remove()},4000);
+  }
+  setInterval(createNote,300);
+</script>
+
 </body>
 </html>
