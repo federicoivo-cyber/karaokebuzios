@@ -3,150 +3,234 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Karaoke Búzios 🎤🌴</title>
+<title>Participar en Karaoke 🎤</title>
 <style>
   body {
-  margin:0; padding:0;
-  font-family: 'Segoe UI', system-ui, sans-serif;
-  background: linear-gradient(to bottom, #00c3ff, #ffff66);
-  overflow:hidden; /* ✅ actualizado */
-  color:#333;
-}
+    margin: 0;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: linear-gradient(135deg, #00c3ff, #ff99cc, #ffff66);
+    background-size: 300% 300%;
+    animation: gradientMove 10s infinite alternate ease-in-out;
+    color: #fff;
+  }
+
+  @keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+  }
+
   header {
-    text-align:center; padding:30px;
+    text-align: center;
+    padding: 20px;
   }
   h1 {
-    font-size:3em; color:#fff; text-shadow:2px 2px 5px #000;
-  }
-  p {
-    font-size:1.3em; color:#fff; text-shadow:1px 1px 3px #000;
-  }
-  .button {
-    display:inline-block;
-    margin-top:20px;
-    padding:20px 40px;
-    font-size:1.3em;
-    color:#fff;
-    background:linear-gradient(45deg,#ffcc00,#00cc33);
-    border:none;
-    border-radius:12px;
-    cursor:pointer;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
-    transition: 0.3s;
-  }
-  .button:hover {
-    transform: scale(1.1);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    font-size: 2.5em;
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.4);
   }
 
-  /* Confeti */
-  .confetti {
-    position:absolute; width:10px; height:10px;
-    background:yellow;
-    top:-10px; animation:fall 5s linear infinite;
-    border-radius:50%;
-  }
-  @keyframes fall {
-    0% {top:-10px; transform: rotate(0deg);}
-    100% {top:100vh; transform: rotate(360deg);}
+  .container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 20px;
   }
 
-  /* Cantante animado */
-  .singer-container {
-    position:fixed; bottom:20px; left:20px; width:160px; height:160px;
+  form {
+    background: rgba(255,255,255,0.15);
+    border-radius: 12px;
+    padding: 20px;
+    width: 300px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
   }
-  .singer-gif {
-    width:100%; animation:bounce 2s infinite;
+  input, select, button {
+    width: 100%;
+    margin: 8px 0;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
   }
-  @keyframes bounce {
-    0%,100%{ transform: translateY(0);}
-    50%{ transform: translateY(-20px);}
+  input, select {
+    color: #333;
+  }
+  button {
+    background: linear-gradient(45deg,#ffcc00,#00cc33);
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: bold;
+  }
+  button:hover {
+    transform: scale(1.05);
+    filter: brightness(1.2);
   }
 
-  /* Notas musicales en curva */
-  .note {
-    position:absolute;
-    font-size:1.2em;
-    animation:note-float 4s linear forwards;
-  }
-  @keyframes note-float {
-    0% {transform: translate(0,0) scale(1);}
-    25% {transform: translate(20px,-30px) scale(1.2);}
-    50% {transform: translate(-10px,-60px) scale(1.1);}
-    75% {transform: translate(15px,-90px) scale(1.3);}
-    100% {transform: translate(0,-120px) scale(0);}
+  /* Panel derecho: usuarios y chat */
+  .community {
+    background: rgba(0,0,0,0.3);
+    border-radius: 12px;
+    padding: 20px;
+    width: 340px;
+    max-height: 70vh;
+    overflow-y: auto;
   }
 
-  /* Mensaje CPF */
-  .cpf-message {
-    position:fixed;
-    bottom:20px; right:20px;
-    background:rgba(255,255,255,0.95);
-    padding:15px 20px;
-    border-radius:12px;
-    font-size:1em;
-    text-align:center;
-    box-shadow:0 4px 12px rgba(0,0,0,0.3);
+  .user-list {
+    list-style: none;
+    padding: 0;
+  }
+  .user-list li {
+    background: rgba(255,255,255,0.2);
+    margin: 5px 0;
+    padding: 8px;
+    border-radius: 8px;
+  }
+
+  .chat-box {
+    margin-top: 20px;
+  }
+  .messages {
+    max-height: 200px;
+    overflow-y: auto;
+    background: rgba(255,255,255,0.15);
+    padding: 10px;
+    border-radius: 10px;
+  }
+  .msg {
+    margin: 5px 0;
+  }
+
+  .emoji-picker {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 5px;
+  }
+  .emoji-picker span {
+    cursor: pointer;
+    font-size: 1.3em;
+    transition: transform 0.2s;
+  }
+  .emoji-picker span:hover {
+    transform: scale(1.3);
   }
 </style>
 </head>
 <body>
-
 <header>
-  <h1>🎤 Karaoke Night Búzios 🇧🇷🎶</h1>
-  <p>Bem-vindo ao show! / ¡Bienvenido al show!<br>Escolha sua música e venha brilhar / Elegí tu canción y vení a brillar</p>
-  <button class="button" onclick="window.location.href='form.html'">Participar / Participar</button>
+  <h1>🎤 Participa en el Karaoke Búzios 🎶</h1>
+  <p>Completa tus datos y saluda a los demás participantes 👋</p>
 </header>
 
-<!-- Confeti -->
-<div id="confetti-container"></div>
+<div class="container">
+  <form id="karaokeForm">
+    <input type="text" id="name" placeholder="Tu nombre" required>
+    <input type="text" id="song" placeholder="Canción" required>
+    <input type="text" id="artist" placeholder="Artista" required>
+    <select id="language" required>
+      <option value="es">Español</option>
+      <option value="pt">Português</option>
+      <option value="en">English</option>
+    </select>
+    <button type="submit">🎶 Enviar / Send</button>
+  </form>
 
-<!-- Cantante animado (GIF caricatura brasileña) -->
-<div class="singer-container">
-  <img src="https://imgur.com/W1z56gT" alt="Cantante animado" class="singer-gif" id="singer">
+  <div class="community">
+    <h3>👥 Participantes en vivo</h3>
+    <ul id="userList" class="user-list"></ul>
+
+    <div class="chat-box">
+      <h4>💬 Chat Karaoke</h4>
+      <div id="messages" class="messages"></div>
+      <input type="text" id="chatInput" placeholder="Escribe un mensaje...">
+      <div class="emoji-picker">
+        <span>🎤</span><span>🎶</span><span>😄</span><span>🔥</span><span>👏</span>
+      </div>
+      <button id="sendBtn">Enviar</button>
+    </div>
+  </div>
 </div>
 
-<!-- Notas musicales -->
-<div id="notes-container"></div>
-
-<!-- Mensaje CPF -->
-<div class="cpf-message">
-  Podés colaborar con el show a través del CPF:<br>
-  <strong>028.602.077.75</strong><br>
-  ¡Gracias por tu colaboración! 🙏🎶
-</div>
-
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
-  // Confeti
-  const confettiContainer = document.getElementById('confetti-container');
-  for(let i=0;i<60;i++){
+  const firebaseConfig = {
+    apiKey: "AIzaSyDM0CAPFLXh_bVDCh43rJs_XCfcvATtnjg",
+    authDomain: "buzios-karaoke-fb.firebaseapp.com",
+    databaseURL: "https://buzios-karaoke-fb-default-rtdb.firebaseio.com",
+    projectId: "buzios-karaoke-fb",
+    storageBucket: "buzios-karaoke-fb.firebasestorage.app",
+    messagingSenderId: "420981577649",
+    appId: "1:420981577649:web:c5b5c3baa23cfd480d4f90"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  const userNameInput = document.getElementById('name');
+  const form = document.getElementById('karaokeForm');
+  const userList = document.getElementById('userList');
+  const messagesDiv = document.getElementById('messages');
+  const chatInput = document.getElementById('chatInput');
+  const sendBtn = document.getElementById('sendBtn');
+
+  const userId = 'user-' + Math.random().toString(36).substring(2,9);
+  let userName = '';
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    userName = userNameInput.value.trim();
+    const song = document.getElementById('song').value.trim();
+    const artist = document.getElementById('artist').value.trim();
+    const language = document.getElementById('language').value;
+    db.ref('karaoke/entries').push({ name: userName, song, artist, language, timestamp: Date.now() });
+    db.ref('karaoke/users/' + userId).set({ name: userName, online: true });
+    form.reset();
+  });
+
+  // Mostrar usuarios conectados
+  db.ref('karaoke/users').on('value', snap => {
+    const users = snap.val() || {};
+    userList.innerHTML = '';
+    Object.values(users).forEach(u => {
+      const li = document.createElement('li');
+      li.textContent = u.name + (u.online ? ' 🟢' : ' 🔴');
+      userList.appendChild(li);
+    });
+  });
+
+  // Chat en tiempo real
+  sendBtn.addEventListener('click', () => {
+    if(!chatInput.value.trim() || !userName) return;
+    db.ref('karaoke/chat').push({ user: userName, text: chatInput.value, time: Date.now() });
+    chatInput.value = '';
+  });
+
+  db.ref('karaoke/chat').limitToLast(50).on('child_added', snap => {
+    const msg = snap.val();
     const div = document.createElement('div');
-    div.className='confetti';
-    div.style.left = Math.random()*100 + 'vw';
-    div.style.backgroundColor = `hsl(${Math.random()*360},80%,60%)`;
-    div.style.animationDuration = (3+Math.random()*5) + 's';
-    div.style.width = (6+Math.random()*10) + 'px';
-    div.style.height = div.style.width;
-    confettiContainer.appendChild(div);
-  }
+    div.className = 'msg';
+    div.innerHTML = `<strong>${msg.user}:</strong> ${msg.text}`;
+    messagesDiv.appendChild(div);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  });
 
-  // Notas musicales animadas
-  const notesContainer = document.getElementById('notes-container');
-  const notes = ['🎵','🎶','🎤','🎼','🎹','🥁'];
-  function createNote(){
-    const n = document.createElement('div');
-    n.className='note';
-    n.style.left = 40 + Math.random()*120 + 'px';
-    n.style.bottom = '150px';
-    n.textContent = notes[Math.floor(Math.random()*notes.length)];
-    notesContainer.appendChild(n);
-    setTimeout(()=>{n.remove()},4000);
-  }
-  setInterval(createNote,300);
+  // Emojis
+  document.querySelectorAll('.emoji-picker span').forEach(e => {
+    e.addEventListener('click', () => {
+      chatInput.value += e.textContent;
+      chatInput.focus();
+    });
+  });
+
+  // Detectar desconexión
+  window.addEventListener('beforeunload', () => {
+    if(userId) db.ref('karaoke/users/' + userId).remove();
+  });
 </script>
-
 </body>
 </html>
+
+</html>
+
 
 
 
